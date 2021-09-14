@@ -42,10 +42,12 @@ export function Search({data}) {
     const {value} = e.target;
     setText(value);
 
+    const autoHistory = JSON.parse(localStorage.getItem("searchX") || "[]");
+    const autoHistoryFiltered = autoHistory.filter(result=>result.label.toLowerCase().startsWith(value.toLowerCase()));
     const filteredResults = data.filter(result=>result.label.toLowerCase().startsWith(value.toLowerCase()));
     const filteredHistoryResults = autocompleteResults.filter(result=>result.label.toLowerCase().startsWith(value.toLowerCase()));
 
-    const uniqueResults = uniqueArrayOfObjects([...filteredHistoryResults, ...filteredResults], 'id');
+    const uniqueResults = uniqueArrayOfObjects([...autoHistoryFiltered, ...filteredHistoryResults, ...filteredResults], 'id');
     setAutocompleteResults(uniqueResults);
  }
 
