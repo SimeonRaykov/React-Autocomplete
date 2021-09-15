@@ -29,12 +29,25 @@ export function Search({data}) {
     setSearchResults(data)
  ,[data]);
 
+ const persistSearch = (id, label) =>{
+    const autoHistory = JSON.parse(localStorage.getItem("searchX") || "[]");
+    autoHistory.push({id, label, persisted: true});
+    const uniqueLabels = uniqueArrayOfObjects(autoHistory, 'label');
+    localStorage.setItem("searchX", JSON.stringify(uniqueLabels));
+ }
+
+ const handleAutocompleteSearch = (id, label) =>{
+    persistSearch(id, label);
+    handleSearch(label);
+ }
+
  const onKeyDown = (e)=>{
     if (e.key === 'Enter') {
         handleSearch(text);
-        const autoHistory = JSON.parse(localStorage.getItem("searchX") || "[]");
-        autoHistory.push({id: new Date(), label: text, persisted: true});
-        localStorage.setItem("searchX", JSON.stringify(autoHistory));
+        if(text){
+            const id = Math.random();
+            persistSearch(id, text)
+        }
       }
  }
 
@@ -53,6 +66,7 @@ export function Search({data}) {
 
  const handleSearch = async(label) =>{
     setText(label);
+
     const startSearchingTime = new Date();
     const filteredResults = data.filter(result=>result.label.startsWith(label));
     await sleep(20); 
@@ -91,14 +105,13 @@ export function Search({data}) {
                        <hr></hr>
                        <ul className="autocomplete-list">
                         {autocompleteResults.map(({id, label, persisted})=>(
-                            <li onClick={() => handleSearch(label)} key={id}>
+                            <li onClick={() => handleAutocompleteSearch(id, label)} key={id}>
                                 <div>
                                 <FontAwesomeIcon color="lightslategray" icon={persisted? faHistory : faSearch}>
             </FontAwesomeIcon>
                                 <span className="suggested-label">{label}</span>
                                 </div>
-                                {persisted ? <button onClick={(e) => removeSuggestedResult(e, id)}>Remove</button> : null}
-                                
+                                {persisted ? <button className="remove-suggested-btn" onClick={(e) => removeSuggestedResult(e, id)}>Remove</button> : null}
                             </li>
                         ))}
                         </ul>

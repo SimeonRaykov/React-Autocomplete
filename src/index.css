@@ -63,6 +63,18 @@ hr{
   padding-left: 8px;
 }
 
+.remove-suggested-btn{
+  border: none;
+  cursor: pointer;
+  background-color: inherit;
+  color: gray;
+}
+
+.remove-suggested-btn:hover{
+  color: blue;
+  text-decoration: underline;
+}
+
 .autocomplete-list li:hover{
   background-color: lightgray;
 }
